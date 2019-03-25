@@ -1,16 +1,16 @@
-﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using DemoApp.Events;
+﻿using DemoApp.Events;
 using DemoApp.Models;
 using DemoApp.Services;
 using Prism.Events;
 using Prism.Navigation;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace DemoApp.ViewModels
 {
-	public class TodoListPageViewModel : ViewModelBase
+    public class TodoListPageViewModel : ViewModelBase
 	{
 	    private ObservableCollection<TodoModel> _list;
 	    public ObservableCollection<TodoModel> List
