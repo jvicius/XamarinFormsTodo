@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:behaviors="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+             xmlns:converters="clr-namespace:DemoApp.Converters;assembly=DemoApp"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="DemoApp.Views.TodoListPage"
+             Title="{Binding Title}"
+             >
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Priority="1" Command="{Binding AddTodoCommand}"
+                     Icon="ic_plus_circle_white_48dp" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBooleanConverter x:Key="Inverter"/>
+            <converters:ItemTappedEventArgsConverter x:Key="ItemTappedConverter" />
+            <converters:BooleanToImageCheckConverter x:Key="BooleanToImageCheckConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <ListView
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand"
+            x:Name="ListOptions"
+            SeparatorVisibility="None"
+            ItemsSource="{Binding List}"
+            ItemTapped="List_ItemTapped"
+            HasUnevenRows="True"
+            RefreshCommand="{Binding InitCommand}"
+            IsPullToRefreshEnabled="True"
+            IsRefreshing="{Binding IsExecNavigation, Mode=OneWay}"
+            BackgroundColor="White"
+            >
+
+            <ListView.Header >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" IsVisible="{Binding IsItemsTodo,Converter={StaticResource Inverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row ="0" 
+                                       HorizontalOptions="CenterAndExpand" 
+                                       Source="ic_comment_question_outline_grey600_48dp" 
+                                       WidthRequest="40" 
+                                       HeightRequest="40"
+                                       Margin="0,20,0,0"
+                    >
+                        </Image>
+                        <Label Grid.Row ="1" Text="{Binding Message}" HorizontalOptions="CenterAndExpand" />
+                    </Grid>
+                </Grid>
+            </ListView.Header>
+
+            <ListView.Behaviors>
+                <behaviors:EventToCommandBehavior EventName="ItemTapped" Command="{Binding NavigateCommand}" EventArgsConverter="{StaticResource ItemTappedConverter}" />
+            </ListView.Behaviors>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+
+                        <ViewCell.ContextActions>
+                            <MenuItem Text="Delete" Icon="ic_minus_circle_grey600_48dp" Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=ListOptions}}" CommandParameter="{Binding}" IsDestructive="True"></MenuItem>
+                        </ViewCell.ContextActions>
+
+                        <Grid RowSpacing="0" ColumnSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button 
+                                BackgroundColor="Transparent"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Image="{Binding IsComplete,Converter={StaticResource BooleanToImageCheckConverter}}" 
+                                HeightRequest="50"
+                                WidthRequest="50"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Margin="10,0,10,0"
+                                Command="{Binding Path=BindingContext.CheckCommand, Source={x:Reference Name=ListOptions}}" CommandParameter="{Binding}"
+                            >
+
+                            </Button>
+
+                            <Label Grid.Row="0" Grid.Column="1"
+                                                    HorizontalTextAlignment="Start" 
+                                                    Text="{Binding Description}" 
+                                                    VerticalOptions="Center"
+                                                    Margin="0,5,0,5"
+                                                />
+
+
+
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+    </ContentPage.Content>
+
+</ContentPage>
